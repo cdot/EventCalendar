@@ -1,5 +1,5 @@
 # Event Calendar
-JQuery UI widget for a simple event calendar application.
+UI for a simple event calendar application.
 
 <img src="/images/splash.png" width="197" height="309" alt="Image" />
 
@@ -16,21 +16,17 @@ For example:
    description: "A time for reflection"
 }
 ```
-The widget supports adding, removing and editing events.
+The calendar supports adding, removing and editing events.
 
-## Installation
-```
-$ npm install @cdot/event_calendar
-```
 At time of writing, recurring events are not supported.
 
 ## Usage
-Invoke the widget on a div in the normal way. e.g.
 ```
-$("#selector").event_calendar({ title: "Public Holidays" })
+const cal_el = document.getElementById("container");
+new EventCalendar(cal_el, { title: "Public Holidays" })
 ```
 ## Options
-Options are passed to the widget in the usual way.
+Options are passed in the second parameter.
 
 ### add
 Function that will be called when an event is added to the calendar. Will be passed a structure describing the event `{ start: end: title: description: }` and should return a Promise. The event structure can be modified (e.g. to add a unique id for the event) and any modifications will be retained in the `events` structure passed to the widget.

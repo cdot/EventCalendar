@@ -1,4 +1,5 @@
 /*!
+ * Copyright 2026 Crawford Currie
  * Derived from:
  * ClockPicker v0.0.7 for jQuery (http://weareoutman.github.io/clockpicker/)
  * Copyright 2014 Wang Shenwei.
@@ -8,7 +9,6 @@
  * Copyright 2011-2014 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
-
 .clockpicker-popover {
   position: absolute;
   top: 0;
@@ -26,9 +26,11 @@
   -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
   box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
+
 .clockpicker-popover .popover-content {
   padding: 9px 14px;
 }
+
 .clockpicker-popover > .arrow,
 .clockpicker-popover > .arrow:after {
   position: absolute;
@@ -53,16 +55,20 @@
   -ms-transform:none;
   transform:none;
 }
+
 .clockpicker-popover > .arrow {
   border-width: 11px;
 }
+
 .clockpicker-popover > .arrow:after {
   content: "";
   border-width: 10px;
 }
+
 .clockpicker-popover.top {
   margin-top: -10px;
 }
+
 .clockpicker-popover.top > .arrow {
   bottom: -11px;
   left: 50%;
@@ -71,6 +77,7 @@
   border-top-color: rgba(0, 0, 0, .25);
   border-bottom-width: 0;
 }
+
 .clockpicker-popover.top > .arrow:after {
   bottom: 1px;
   margin-left: -10px;
@@ -78,9 +85,11 @@
   border-top-color: #fff;
   border-bottom-width: 0;
 }
+
 .clockpicker-popover.right {
   margin-left: 10px;
 }
+
 .clockpicker-popover.right > .arrow {
   top: 50%;
   left: -11px;
@@ -89,6 +98,7 @@
   border-right-color: rgba(0, 0, 0, .25);
   border-left-width: 0;
 }
+
 .clockpicker-popover.right > .arrow:after {
   bottom: -10px;
   left: 1px;
@@ -96,9 +106,11 @@
   border-right-color: #fff;
   border-left-width: 0;
 }
+
 .clockpicker-popover.bottom {
   margin-top: 10px;
 }
+
 .clockpicker-popover.bottom > .arrow {
   top: -11px;
   left: 50%;
@@ -107,6 +119,7 @@
   border-bottom-color: #999;
   border-bottom-color: rgba(0, 0, 0, .25);
 }
+
 .clockpicker-popover.bottom > .arrow:after {
   top: 1px;
   margin-left: -10px;
@@ -114,9 +127,11 @@
   border-top-width: 0;
   border-bottom-color: #fff;
 }
+
 .clockpicker-popover.left {
   margin-left: -10px;
 }
+
 .clockpicker-popover.left > .arrow {
   top: 50%;
   right: -11px;
@@ -125,6 +140,7 @@
   border-left-color: #999;
   border-left-color: rgba(0, 0, 0, .25);
 }
+
 .clockpicker-popover.left > .arrow:after {
   right: 1px;
   bottom: -10px;
@@ -132,6 +148,7 @@
   border-right-width: 0;
   border-left-color: #fff;
 }
+
 .clockpicker-popover .btn {
   cursor: pointer;
   -webkit-user-select: none;
@@ -142,6 +159,7 @@
   border: 1px solid transparent;
 
 }
+
 .clockpicker-popover .btn:focus,
 .clockpicker-popover .btn:active:focus,
 .clockpicker-popover .btn.active:focus {
@@ -149,11 +167,13 @@
   outline: 5px auto -webkit-focus-ring-color;
   outline-offset: -2px;
 }
+
 .clockpicker-popover .btn:hover,
 .clockpicker-popover .btn:focus {
   color: #333;
   text-decoration: none;
 }
+
 .clockpicker-popover .btn:active,
 .clockpicker-popover .btn.active {
   background-image: none;
@@ -161,11 +181,13 @@
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, .125);
 }
+
 .clockpicker-popover .btn-default {
   color: #333;
   background-color: #fff;
   border-color: #ccc;
 }
+
 .clockpicker-popover .btn-default:hover,
 .clockpicker-popover .btn-default:focus,
 .clockpicker-popover .btn-default:active,
@@ -174,10 +196,12 @@
   background-color: #ebebeb;
   border-color: #adadad;
 }
+
 .clockpicker-popover .btn-default:active,
 .clockpicker-popover .btn-default.active {
   background-image: none;
 }
+
 .clockpicker-popover .btn-block {
   display: block;
   width: 100%;
@@ -186,23 +210,29 @@
 .clockpicker .input-group-addon {
   cursor: pointer;
 }
+
 .clockpicker-moving {
   cursor: move;
 }
+
 .clockpicker-popover.arrow-left > .arrow {
   left: 25px;
 }
+
 .clockpicker-popover.arrow-top > .arrow {
   top: 17px;
 }
+
 .clockpicker-popover.arrow-right > .arrow {
   left: auto;
   right: 25px;
 }
+
 .clockpicker-popover.arrow-bottom > .arrow {
   top: auto;
   bottom: 6px;
 }
+
 .clockpicker-popover .popover-title {
   padding: 8px 14px;
   margin: 0;
@@ -213,6 +243,7 @@
   border-bottom: 1px solid #ebebeb;
   border-radius: 5px 5px 0 0;
 }
+
 .clockpicker-popover .popover-title {
   background-color: #fff;
   color: #999;
@@ -221,17 +252,21 @@
   line-height: 30px;
   text-align: center;
 }
+
 .clockpicker-popover .popover-title span {
   cursor: pointer;
 }
+
 .clockpicker-popover .popover-content {
   background-color: #f8f8f8;
   padding: 12px;
 }
+
 .popover-content:last-child {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+
 .clockpicker-plate {
   background-color: #fff;
   border: 1px solid #ccc;
@@ -248,6 +283,7 @@
   -ms-user-select: none;
   user-select: none;
 }
+
 .clockpicker-canvas,
 .clockpicker-dial {
   width: 100%;
@@ -256,9 +292,11 @@
   left: -1px;
   top: -1px;
 }
+
 .clockpicker-minutes {
   visibility: hidden;
 }
+
 .clockpicker-tick {
   border-radius: 50%;
   color: #666;
@@ -266,14 +304,18 @@
   text-align: center;
   width: 26px;
   height: 26px;
+  margin-left: -2px;
+  margin-top: -2px;
   position: absolute;
   cursor: pointer;
 }
+
 .clockpicker-tick.active,
 .clockpicker-tick:hover {
   background-color: rgb(192, 229, 247);
   background-color: rgba(0, 149, 221, .25);
 }
+
 .clockpicker-button {
   background-image: none;
   background-color: #fff;
@@ -283,13 +325,16 @@
   margin: 0;
   padding: 10px 0;
 }
+
 .clockpicker-button:hover {
   background-image: none;
   background-color: #ebebeb;
 }
+
 .clockpicker-button:focus {
   outline: none!important;
 }
+
 .clockpicker-dial {
   -webkit-transition: -webkit-transform 350ms, opacity 350ms;
   -moz-transition: -moz-transform 350ms, opacity 350ms;
@@ -297,9 +342,11 @@
   -o-transition: -o-transform 350ms, opacity 350ms;
   transition: transform 350ms, opacity 350ms;
 }
+
 .clockpicker-dial-out {
   opacity: 0;
 }
+
 .clockpicker-hours.clockpicker-dial-out {
   -webkit-transform: scale(1.2, 1.2);
   -moz-transform: scale(1.2, 1.2);
@@ -307,6 +354,7 @@
   -o-transform: scale(1.2, 1.2);
   transform: scale(1.2, 1.2);
 }
+
 .clockpicker-minutes.clockpicker-dial-out {
   -webkit-transform: scale(.8, .8);
   -moz-transform: scale(.8, .8);
@@ -314,6 +362,7 @@
   -o-transform: scale(.8, .8);
   transform: scale(.8, .8);
 }
+
 .clockpicker-canvas {
   -webkit-transition: opacity 175ms;
   -moz-transition: opacity 175ms;
@@ -321,9 +370,11 @@
   -o-transition: opacity 175ms;
   transition: opacity 175ms;
 }
+
 .clockpicker-canvas-out {
   opacity: 0.25;
 }
+
 .clockpicker-canvas-bearing,
 .clockpicker-canvas-fg {
   stroke: none;
@@ -333,25 +384,34 @@
   stroke: none;
   fill: rgb(192, 229, 247);
 }
+
 .clockpicker-canvas-bg-trans {
   fill: rgba(0, 149, 221, .25);
 }
+
 .clockpicker-canvas line {
   stroke: rgb(0, 149, 221);
   stroke-width: 1;
   stroke-linecap: round;
   /*shape-rendering: crispEdges;*/
 }
+
 .clockpicker-button.am-button {
   margin: 1px;
   padding: 5px;
   border: 1px solid rgba(0, 0, 0, .2);
   border-radius: 4px;
-  
 }
+
 .clockpicker-button.pm-button {
   margin: 1px 1px 1px 136px;
   padding: 5px;
   border: 1px solid rgba(0, 0, 0, .2);
   border-radius: 4px;
+}
+
+.clockpicker-state-highlight {
+	border: 1px solid #dad55e;
+	background: #fffa90;
+	color: #777620;
 }

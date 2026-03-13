@@ -3,12 +3,9 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
-    <script src="../node_modules/jquery-ui-dist/jquery-ui.js"></script>
-    <link href="../node_modules/jquery-ui-dist/jquery-ui.css" rel="stylesheet">
-    <link href="../node_modules/jquery-ui-dist/jquery-ui.theme.css" rel="stylesheet">
-    <link href="../css/event_calendar.css" rel="stylesheet">
-    <script type="module" src="./EventCalendar_dist.js"></script>
+    <link href="../css/EventCalendar.css" rel="stylesheet">
+    <link href="../css/ClockPicker.css" rel="stylesheet">
+    <script type="module" src="./EventCalendar.js"></script>
   </head>
   <body>
     <h1>event_calendar:</h1>
@@ -53,8 +50,6 @@
 
     <button id="open-dialog">Open modal dialog</button>
 
-    <div class="ui-dialog">
-      <div name="calendar"></div>
-    </div>
+    <div id="calendar"></div>
   </body>
 </html>

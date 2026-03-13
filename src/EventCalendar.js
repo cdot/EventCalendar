@@ -1,12 +1,13 @@
-/*Copyright (C) Crawford Currie 2023 - All rights reserved*/
+/*Copyright (C) Crawford Currie 2023-2026 - All rights reserved*/
 
-import { CalendarEvent } from "./CalendarEvent.js";
-import { EditEventDialog } from "./EditEventDialog.js";
+import CalendarEvent from "./CalendarEvent.js";
+import EditEventDialog from "./EditEventDialog.js";
 
 /**
  * Get the first instant of the day that the date falls in
  * @param {Date} date date of interest
  * @return {Date} first ms of the day
+ * @private
  */
 function startOfDay(date) {
   const s = new Date(date);
@@ -21,6 +22,7 @@ function startOfDay(date) {
  * Get the last instant of the day that the date falls in
  * @param {Date} date date of interest
  * @return {Date} one ms before midnight
+ * @private
  */
 function endOfDay(date) {
   const s = new Date(date);
@@ -35,6 +37,7 @@ function endOfDay(date) {
  * Get the first instant of the month that the date falls in
  * @param {Date} date date of interest
  * @return {Date} first ms of the month
+ * @private
  */
 function startOfMonth(date) {
   const s = new Date(date);
@@ -51,6 +54,7 @@ function startOfMonth(date) {
  * @param {Date} date date of interest
  * @return {Date} last instant in the month
  * @return {Date} one ms before midnight on the last day of the month
+ * @private
  */
 function endOfMonth(date) {
   const s = new Date(date);
@@ -67,6 +71,7 @@ function endOfMonth(date) {
  * @param {number} y year
  * @param {number} m month
  * @return { number} number of days in the month
+ * @private
  */
 function lengthOfMonth(y, m) {
   const nMonth = (m + 1) % 12;
@@ -75,22 +80,29 @@ function lengthOfMonth(y, m) {
 }
 
 /**
- * jQuery UI widget for a visual event calendar with a list of events.
- * Each of which has a title and a description.
+ * UI for a simple visual event calendar with a list of events,
+ * each of which has a title and a description.
  */
 class EventCalendar {
 
   /**
-   * @param {object} options widget options
+   * A calendar is constructed in an element. The UI is created asynchronously.
+   * @param {HTMLElement} element element to create the calendar in.
+   * @param {object} options options
    * @param {CalendarEvent[]} options.events optional list of events, may
-   * be simple objects that just look like CalendarEvent.
-   * @param {boolean?} future_only only allow creation of events today
+   * be simple objects that just look like `CalendarEvent`.
+   * @param {boolean} options.future_only only allow creation of events today
    * and on future days. default: false
-   * @param {object?} editor options passed on the the editor dialog
    */
-  constructor(options) {
+  constructor(element, options) {
     /**
-     * Widget options
+     * Element the calendar is sitting in
+     * @member {HTMLElement}
+     */
+    this.element = element;
+
+    /**
+     * Options
      * @member {object}
      */
     this.options = options || {};
@@ -129,24 +141,39 @@ class EventCalendar {
      * @member {number}
      * @private
      */
-    this.event_dialog = new EditEventDialog(this.options.editor);
+    this.event_dialog = new EditEventDialog();
+
+    this.open();
   }
 
   /**
-   * Load a list of events from a URL. Does not refresh the UI.
+   * Load a list of events from a URL.
+   * @return {Promise} promise that resolves when the events have
+   * been loaded and the UI refreshed.
    */
   load(url) {
-    return $.get(url)
+    return fetch(url)
+    .then(response => {
+      if (!response.ok)
+        throw new Error(`Response status: ${response.status}`);
+      return response.json();
+    })
     .then(events => {
       this.events = events.map(e => new CalendarEvent(e));
+      this.refresh();
     });
   }
 
   /**
    * Post the events to a URL.
+   * @return {Promise} promise that resolves when the events have
+   * been saved.
    */
   save(url) {
-    return $.post(url, this.events);
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(this.events)
+    });
   }
 
   /**
@@ -251,14 +278,17 @@ class EventCalendar {
   }
 
   /**
-   * Show the current month on the calendar
+   * Show the current month on the calendar.
+   * @private
    */
   refreshCalendar() {
     const first = new Date(this.selectedYear, this.selectedMonth, 1);
-    $(".this-month", this.$el).text(first.toLocaleDateString(undefined, {
-      month: "long", year: "numeric" }));
-    const $dayList = $(".day-list", this.$el);
-    $dayList.empty();
+    this.element.querySelector(".this-month").textContent =
+    first.toLocaleDateString(undefined, {
+      month: "long", year: "numeric"
+    });
+    const dayList = this.element.querySelector(".day-list");
+    dayList.innerHTML = "";
 
     // Calculate last day of previous month
     const prevMonthLength =
@@ -279,66 +309,71 @@ class EventCalendar {
 
     // 7 columns by 5 rows = 35 total.
     for (let row = 0; row < 5; row++) {
-      const $row = $("<div class='day-row'></div>");
+      const row = document.createElement("div");
+      row.classList.add('day-row');
       for (let dow = 0; dow < 7; dow++) {
         let date = dom;
         if (dom <= 0)
           date = prevMonthLength + dom;
         else if (dom > monthLength)
           date = dom - monthLength;
-        const $span = $(`<span>${date}</span>`);
-        const $a = $("<a></a>");
+        const span = document.createElement("span");
+        span.textContent = date;
+        const a = document.createElement("a");
         if (dom <= 0) {
-          $span.addClass("out-day");
-          $a.on("click", () => this.selectLastMonth());
+          span.classList.add("out-day");
+          a.addEventListener("click", () => this.selectLastMonth());
 
         } else if (dom > monthLength) {
-          $span.addClass("out-day");
-          $a.on("click", () => this.selectNextMonth());
+          span.classList.add("out-day");
+          a.addEventListener("click", () => this.selectNextMonth());
 
         } else {
            if (todayYear === this.selectedYear
                && todayMonth === this.selectedMonth) {
              if (todayDay === dom)
-               $a.addClass("current-day");
+               a.classList.add("current-day");
              if (this.selectedDate === dom)
-               $a.addClass("selected");
+               a.classList.add("selected");
            }
 
-          const $dots = $("<span class='dots'></span>");
+          const dots = document.createElement("span");
+          dots.classList.add('dots');
           this.eventsOnDay(
             new Date(this.selectedYear, this.selectedMonth, dom))
           .forEach(e => {
-            $dots.append(e.$dots());
+            dots.append(e.dots());
             return true;
           });
-          $span.append($dots);
+          span.append(dots);
 
           if (this.options.future_only
               && new Date(this.selectedYear, this.selectedMonth, dom) < today)
-            $a.addClass("past-day");
+            a.classList.add("past-day");
 
           const day = dom;
-          $a.on("click", () => {
-            $(".selected", this.$el).removeClass("selected");
-            $a.addClass("selected");
+          a.addEventListener("click", () => {
+            const alsel = this.element.querySelectorAll(".selected");
+            alsel.forEach(e => e.classList.remove("selected"));
+            a.classList.add("selected");
             this.selectedDate = day;
             //console.debug("Selected", this.selectedDate);
             this.refresh();
           });
         }
 
-        $a.append($span);
-        $row.append($a);
+        a.append(span);
+        row.append(a);
         dom++;
       }
-      $dayList.append($row);
+      dayList.append(row);
     }
-    return $dayList;
+    return dayList;
   }
 
   /**
-   * Display the given set of events in the event display area
+   * Display the given set of events in the event display area.
+   * @private
    */
   refreshEvents() {
     const events = (typeof this.selectedDate === "undefined")
@@ -346,12 +381,12 @@ class EventCalendar {
             new Date(this.selectedYear, this.selectedMonth, 1))
           : this.eventsOnDay(
             new Date(this.selectedYear, this.selectedMonth, this.selectedDate));
-    const $info = $(".events-list", this.$el);
-    $info.empty();
+    const info = this.element.querySelector(".events-list");
+    info.innerHTML = "";
     events.forEach(e => {
-      const $event = e.$create({
+      const event = e.create({
         edit: event => {
-          this.event_dialog.open(event, this.$el.closest(".ui-dialog"))
+          this.event_dialog.open(e)
           .then(async ne => {
             if (typeof ne === "object") {
               event.start = ne.start;
@@ -369,63 +404,63 @@ class EventCalendar {
           });
         }
       });
-      $info.append($event);
+      info.append(event);
     });
   }
 
+  /**
+   * Refresh the calendar. May be required after events have been loaded.
+   * @private
+   */
   refresh() {
     this.refreshCalendar();
     this.refreshEvents();
   }
 
   /**
-   * Construct the calendar UI
+   * Construct the calendar UI. Loads the UI from an external HTML file.
+   * @private
    */
-  $create($context) {
-    this.$el = $context;
+  open() {
     const url = new URL("../html/EventCalendar.html", import.meta.url);
-    return $.get(url)
+    return fetch(url)
+    .then(response => response.text())
     .then(html => {
-      this.$el.html(html);
-      if (this.options.title)
-        $("h1", $context).show().text(this.options.title);
-      else
-        $("h1", $context).hide();
+      this.element.innerHTML = html;
+      const titel = this.element.querySelector("h1");
+      if (this.options.title) {
+        titel.textContent = this.options.title;
+        titel.style.display = "block";
+      } else {
+        titel.style.display = "none";
+      }
 
-      $(".prev-year", this.$el)
-      .on("click", () => this.selectLastYear());
-      $(".next-year", this.$el)
-      .on("click", () => this.selectNextYear());
-      $(".prev-month", this.$el)
-      .on("click", () => this.selectLastMonth());
-      $(".next-month", this.$el)
-      .on("click", () => this.selectNextMonth());
+      this.element.querySelector(".prev-year")
+      .addEventListener("click", () => this.selectLastYear());
+      this.element.querySelector(".next-year")
+      .addEventListener("click", () => this.selectNextYear());
+      this.element.querySelector(".prev-month")
+      .addEventListener("click", () => this.selectLastMonth());
+      this.element.querySelector(".next-month")
+      .addEventListener("click", () => this.selectNextMonth());
 
       // Configure the "Add" button
-      $(".add-event", this.$el)
-      .on("click",
-          () => this.event_dialog.open(null, $context)
-          .then(async spec => {
+      this.element.querySelector(".add-event")
+      .addEventListener("click", () =>
+        this.event_dialog.open()
+        .then(spec => {
+          if (typeof spec === "object") {
             const e = new CalendarEvent(spec);
             if (this.options.add)
-              await this.options.add(e);
+              this.options.add(e);
             this.addEvent(e);
             this.refresh();
-          }));
+          }
+        }));
 
       this.refresh();
     });
   }
 }
 
-/**
- * jQueryUI widget
- */
-$.widget("custom.event_calendar", {
-  _create: function() {
-    const events = new EventCalendar(this.options);
-    events.$create($(this.element));
-  }
-});
-
-export { EventCalendar }
+export default EventCalendar;

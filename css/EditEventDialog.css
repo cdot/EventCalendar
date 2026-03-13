@@ -1,13 +1,10 @@
+@import "Modal.css";
+
 .edit-event-dialog div {
-  padding: 0.1em 0;
 }
 
 .edit-event-dialog .dangerous {
   color: red;
-}
-
-.edit-event-dialog .spinner {
-  width: 2em;
 }
 
 .edit-event-dialog .button-rack {
@@ -20,28 +17,9 @@
   width: 100%;
 }
 
-.edit-event-dialog .flexgrid {
-}
-
-.edit-event-dialog .flexrow {
-  display: flex;
-  transition: height 0.3s;
-  align-items: center;
-  justify-content: space-evenly;
-  width: 100%;
-}
-
-.edit-event-dialog .flexrow .datepicker {
-  width: 10em;
-}
-
-.edit-event-dialog .flexrow .clockpicker input {
-  width: 5em;
-}
-
 @media screen and (max-aspect-ratio: 1/1) and (max-width: 720px) {
   .edit-event-dialog {
-    width: 100vw;
+    width: 90vw;
   }
 }
 

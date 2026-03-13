@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <link href="../css/Modal.css" rel="stylesheet">
+    <link href="../css/EditEventDialog.css" rel="stylesheet">
+    <script type="module">
+      import EditEventDialog from "../src/EditEventDialog.js";
+      
+      document.getElementById("open-add")
+      .addEventListener("click", () => {
+        new EditEventDialog()
+        .open()
+        .then(result => alert(result));
+      });
+      
+      document.getElementById("open-edit")
+      .addEventListener("click", () => {
+        new EditEventDialog()
+        .open({
+          start: new Date(),
+          end: new Date(Date.now() + 100000000),
+          title: "Title from spec",
+          description: "Describe the event"
+        })
+        .then(result => alert(result));
+      });
+    </script>
+  </head>
+  <body>
+    <button id="open-add">Add</button>
+    <button id="open-edit">Edit</button>
+  </body>
+</html>

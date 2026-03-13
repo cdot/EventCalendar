@@ -1,4 +1,4 @@
-/*Copyright (C) Crawford Currie 2023 - All rights reserved*/
+/*Copyright (C) Crawford Currie 2023-2026 - All rights reserved*/
 
 /**
  * An event in a calendar.
@@ -52,35 +52,46 @@ class CalendarEvent {
   }
 
   /**
-   * Create the DOM for the event in the events area
+   * Create and populate the DOM for the event
    * @param {function?} options.select function to invoke on select
    * @param {function?} options.edit function to invoke on edit
+   * @return {HTMLElement} the div for the event
    */
-  $create(options) {
-    const $event = $(`<div id="" class="event"></div`);
+  create(options) {
+    const event = document.createElement("div");
+    event.classList.add("event");
     const ss = this.start.toLocaleString().replace(/:[^:]*$/, "");
     const es = this.end.toLocaleString().replace(/:[^:]*$/, "");
-    $event.append(`<div class='event-time'>${ss}&hellip;${es}</span>`);
-    $event.append(
-      `<div class="event-text">${this.title} ${this.description}</div>`);
+    const etime = document.createElement("div");
+    etime.classList.add("event-time");
+    etime.textContent = `${ss}&hellip;${es}`;
+    event.append(etime);
+    const etext = document.createElement("div");
+    etext.classList.add("event-text");
+    event.textContent = `${this.title} ${this.description}`;
+    event.append(etext);
     if (options.select)
-      $event.on("click", () => options.select(this));
+      event.addEventListener("click", () => options.select(this));
     if (options.edit) {
-      const $butt = $("<button class='event-button'>&#9998;</button>");
-      $event.prepend($butt);
-      $butt.button();
-      $butt.on("click", () => options.edit(this));
+      const butt = document.createElement("button");
+      butt.classList.add('event-button');
+      butt.innerHTML = "&#9998;";
+      event.prepend(butt);
+      butt.addEventListener("click", () => options.edit(this));
     }
-    return $event;
+    return event;
   }
 
   /**
    * Return a dot span reflecting the nature of this event
-   * @return {jQuery} span contining the dot
+   * @return {HTMLElement} span containing the dot
    */
-  $dots() {
-    return $("<span class='dot color-pink'></span>");
+  dots() {
+    const dots = document.createElement("span");
+    dots.classList.add('dot');
+    dots.classList.add("color-pink");
+    return dots;
   }
 }
 
-export { CalendarEvent }
+export default CalendarEvent;

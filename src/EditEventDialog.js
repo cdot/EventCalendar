@@ -1,12 +1,13 @@
-/*Copyright (C) Crawford Currie 2023 - All rights reserved*/
+/*Copyright (C) Crawford Currie 2023-2026 - All rights reserved*/
 
-import "./jquery-clockpicker.js";
+import Modal from "./Modal.js";
 
 /**
  * Parse a server local time HH[:MM[:SS]][am|pm] string
  * Times must be in the range 00:00:00..23:59:59
  * @param {string} s time string
  * @return {number[]} array of [ h, m, s ]
+ * @private
  */
 function parseTime(str) {
   let pm = false;
@@ -29,13 +30,7 @@ function parseTime(str) {
 
 class EditEventDialog {
 
-  /**
-   * @param {object?} options options, standard jQueryUI dialog options
-   * @param {object?} options.clockpicker options to pass on to clockpicker
-   */
-  constructor(options) {
-
-    this.options = options || {};
+  constructor() {
 
     /**
      * `resolve` function for the open() promise
@@ -43,10 +38,10 @@ class EditEventDialog {
     this.resolve = undefined;
 
     /**
-     * jQuery object
-     * @member {jQuery}
+     * Container element
+     * @member {HTMLElement}
      */
-    this.$dialog = undefined;
+    this.element = undefined;
   }
 
   /**
@@ -54,138 +49,125 @@ class EditEventDialog {
    * @param {object} event (or event-like thing)
    */
   populate(spec) {
-    const $dialog = this.$dialog;
-    $("[name=start-date]", $dialog).val(spec.start.toDateString());
-    $("[name=start-time]", $dialog).val(spec.start.toLocaleTimeString());
-    $("[name=end-date]", this.$dialog).val(spec.start.toDateString());
-    $("[name=end-time]", $dialog).val(spec.end.toLocaleTimeString());
-    $("[name=title]", $dialog).val(spec.title);
-    $("[name=description]", $dialog).val(spec.description);
+    const element = this.element;
+
+    element.querySelector("[name=start-date]").value =
+    spec.start.toISOString().replace(/T.*$/, "");
+    element.querySelector("[name=start-time]").value =
+    spec.start.toLocaleTimeString();
+    element.querySelector("[name=end-date]").value =
+    spec.end.toISOString().replace(/T.*$/, "");
+    element.querySelector("[name=end-time]").value =
+    spec.end.toLocaleTimeString();
+    element.querySelector("[name=title]").value = spec.title;
+    element.querySelector("[name=description]").value = spec.description;
   }
 
   /**
    * @private
    */
-  $create() {
+  create() {
     const url = new URL("../html/EditEventDialog.html", import.meta.url);
-    return $.get(url)
+    return fetch(url)
+    .then(response => response.text())
     .then(html => {
-      const $dialog = this.$dialog = $(html);
-      $("body").append($dialog);
+      const dialog = document.createElement("div");
+      dialog.classList.add("edit-event-dialog");
+      dialog.classList.add("modal-overlay");
+      dialog.innerHTML = html;
+      this.element = dialog;
+      this.modal = new Modal(dialog);
+      document.querySelector("body").append(dialog);
 
-      $("button.save-button", $dialog)
-      .on("click", () => {
+      dialog.querySelector("[name=start-date]")
+      .addEventListener("change", function() {
+        dialog.querySelector("[name=end-date]").min = this.value;
+      });
+
+      dialog.querySelector("[name=start-time]")
+      .addEventListener("change", function() {
+        dialog.querySelector("[name=end-time]").min = this.value;
+      });
+
+      dialog.querySelector("button.save-button")
+      .addEventListener("click", () => {
         try {
-          const stds = $("[name=start-date]", $dialog).val();
+          const stds = dialog.querySelector("[name=start-date]").value;
           const st = new Date(stds);
-          const stts = parseTime($("[name=start-time]", $dialog).val());
+          const stts = parseTime(dialog.querySelector("[name=start-time]").value);
           st.setHours(parseInt(stts[0]));
           st.setMinutes(parseInt(stts[1]));
           st.setSeconds(parseInt(stts[2]));
 
-          const ets = $("[name=end-date]", $dialog).val();
+          const ets = dialog.querySelector("[name=end-date]").value;
           const et = new Date(ets ? ets : stds);
-          const etts = parseTime($("[name=end-time]", $dialog).val());
+          const etts = parseTime(dialog.querySelector("[name=end-time]").value);
           et.setHours(parseInt(etts[0]));
           et.setMinutes(parseInt(etts[1]));
           et.setSeconds(parseInt(etts[2]));
 
           if (st >= et)
             throw Error("'Start' must be before 'End'");
-          $dialog.dialog("close");
+
+          this.modal.close();
           this.resolve({
             start: st,
             end: et,
-            title: $("[name=title]", $dialog).val(),
-            description: $("[name=description]", $dialog).val()
+            title: dialog.querySelector("[name=title]").value,
+            description: dialog.querySelector("[name=description]").value
           });
         } catch (e) {
           console.error(e);
         }
       });
 
-      $("button.delete-button", $dialog)
-      .on("click", () => {
-        $dialog.dialog("close");
+      dialog.querySelector("button.delete-button")
+      .addEventListener("click", () => {
+        this.modal.close();
         this.resolve("DELETE");
       });
 
-      $("[name=start]", $dialog)
-      .on("change", function() {
-        $("[name=end]", $dialog)
-        .datepicker("option", "minDate", $(this).val());
+      dialog.querySelector("button.modal-close")
+      .addEventListener("click", () => {
+        this.modal.close();
+        this.resolve("ABORT");
       });
-
-      $('.clockpicker', $dialog).clockpicker($.extend({
-        autoclose: true,
-        align: "right"
-      }, this.options.clockpicker));
-
-      return $dialog;
     });
   }
 
   /**
    * Open the dialog on the given event (if defined)
    * @param {CalendarEvent} spec the event to edit (undefined to create)
-   * @return {Promise} that resolves when the dialog is saved, or
+   * @return {Promise<HTMLElement>} that resolves when the dialog is saved, or
    * rejects when it is closed.
    */
-  open(spec, $container) {
+  open(spec) {
     let promise;
-    if (this.$dialog)
-      promise = Promise.resolve(this.$dialog);
+    if (this.element)
+      promise = Promise.resolve();
     else
-      promise = this.$create();
+      promise = this.create();
 
-    return promise.then(() => {
+    return promise
+    .then(() => {
       let title;
       if (spec) {
         this.populate(spec);
-        $("button.delete-button", this.$dialog).show();
+        this.element.querySelector("button.delete-button")
+        .style.display = "block";
         title = "Edit";
       } else {
-        $("button.delete-button", this.$dialog).hide();
+        this.element.querySelector("button.delete-button")
+        .style.display = "none";
         title = "Add";
       }
-
+      this.element.querySelector("h1").textContent = `${title} Event`;
       return new Promise(resolve => {
         this.resolve = resolve;
-        const dopts = {
-          modal: true,
-          title: "Add",
-
-          create: () => {
-            $(".datepicker", this.$dialog)
-            .datepicker({
-              minDate: new Date(),
-              dateFormat: "D, d M yy",
-              beforeShow: () => {
-                // Add the dialog class to inherit font sizes etc
-                $('#ui-datepicker-div').addClass("edit-event-dialog");
-              }
-            });
-            $("select", this.$dialog)
-            .selectmenu();
-            $(".spinner", this.$dialog)
-            .each(function() {
-              $(this).spinner({
-                min: $(this).data("min"),
-                max: $(this).data("max")
-              }).val(0);
-            });
-          },
-          open: () => {
-            this.$dialog.dialog("option", "title", title);
-          },
-          position: { my: "left top", at: "left top", of: $container },
-          width: $container.outerWidth(),
-          height: $container.outerHeight()
-        };
-        this.$dialog.dialog(dopts);
+        this.modal.open();
       });
     });
   }
 }
 
-export { EditEventDialog }
+export default EditEventDialog;

@@ -1,35 +1,49 @@
-<div class="edit-event-dialog" style="display:none">
-  <div class="flexgrid">
-    <div class="flexrow">
-      <b>Start</b>
-        <input type="text" class="datepicker" name="start-date" />
-      </span>
-      <span> at </span>
-      <span class="clockpicker">
-        <input name="start-time">
-      </span>
-    </div>
-    <div class="flexrow">
-      <b>
+<!-- dynamically loaded dialog body -->
+<div class="modal">
+  <div>
+    <button class="modal-close">&times;</button>
+  </div>
+  <h1>Event</h1>
+  <table>
+    <tr>
+      <th scope="row">
+        Start
+      </th>
+      <td>
+        <input type="date" name="start-date" />
+        <b>at</b>
+        <input type="time" name="start-time">
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
         End
-        <input type="text" class="datepicker" name="end-date" />
-      </b>
-      <span> at </span>
-      <span class="clockpicker">
-        <input type="text" name="end-time">
-      </span>
+      </th>
+      <td>
+        <input type="date" name="end-date" />
+        <b>at</b>
+        <input type="time" name="end-time" />
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">
+        Title
+      </th>
+      <td>
+        <input type="text" class="wide" name="title" />
+      </td>
+    </tr>
+  </table>
+  <h2>Description</h2>
+  <textarea id="description" style="width:100%" name="description"></textarea>
+  <div class="button-rack" style="display:table;width:100%;text-align:center;">
+    <div style="display:table-row">
+      <div style="display:table-cell;">
+        <button class="save-button">Save</button>
+      </div>
+      <div style="display:table-cell;">
+        <button class="delete-button dangerous">Delete</button>
+      </div>
     </div>
-  </div>
-  <div>
-    <b>Title</b>
-    <input type="text" class="wide" name="title" />
-  </div>
-  <div>
-    <b>Description</b>
-    <textarea id="description" class="wide" name="description"></textarea>
-  </div>
-  <div class="button-rack">
-    <button class="save-button">Save</button>
-    <button class="delete-button dangerous">Delete</button>
   </div>
 </div>

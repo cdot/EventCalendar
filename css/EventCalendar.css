@@ -1,5 +1,4 @@
-@import "jquery-clockpicker.css";
-@import "edit-event-dialog.css";
+@import "EditEventDialog.css";
 
 .event-calendar {
   position: relative; /* required for placement of floating-button */

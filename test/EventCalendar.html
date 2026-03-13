@@ -3,58 +3,19 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta charset="utf-8" />
-    <script src="../node_modules/jquery/dist/jquery.js"></script>
-    <script src="../node_modules/jquery-ui-dist/jquery-ui.js"></script>
-    <link href="../node_modules/jquery-ui-dist/jquery-ui.css" rel="stylesheet">
-    <link href="../node_modules/jquery-ui-dist/jquery-ui.theme.css" rel="stylesheet">
-    <link href="../css/event_calendar.css" rel="stylesheet">
+    <link href="../css/EventCalendar.css" rel="stylesheet">
     <script type="module" src="./EventCalendar.js"></script>
   </head>
   <body>
     <h1>event_calendar:</h1>
     <div>
       <label for="title">title</label>
-      <input type="text" name="title" value="Calendar" />
+      <input type="text" id="title" value="Calendar" />
     </div>
     <div>
       <label for="future_only">future_only</label>
-      <input type="checkbox" name="future_only" />
+      <input type="checkbox" id="future_only" />
     </div>
-    <h2>editor:</h2>
-    <div>
-      <h3>clockpicker:</h3>
-      <div>
-        <label for="editor-clockpicker-default">editor-clockpicker-now</label>
-        <input type="checkbox" name="editor-clockpicker-default" />
-      </div>
-      <div>
-        <label for="editor-clockpicker-placement">editor-clockpicker-placement</label>
-        <select name="editor-clockpicker-placement">
-          <option>top</option>
-          <option>bottom</option>
-          <option>left</option>
-          <option>right</option>
-        </select>
-      </div>
-      <div>
-        <label for="editor-clockpicker-align">editor-clockpicker-align</label>
-        <select name="editor-clockpicker-align">
-          <option>top</option>
-          <option>bottom</option>
-          <option>left</option>
-          <option>right</option>
-        </select>
-      </div>
-      <div>
-        <label for="editor-clockpicker-twelvehour">editor-clockpicker-twelvehour</label>
-        <input type="checkbox" name="editor-clockpicker-twelvehour" />
-      </div>
-    </div>
-
-    <button id="open-dialog">Open modal dialog</button>
-
-    <div class="ui-dialog">
-      <div name="calendar"></div>
-    </div>
+    <div id="calendar"></div>
   </body>
 </html>

@@ -1,6 +1,6 @@
-/*Copyright (C) Crawford Currie 2023 - All rights reserved*/
+/*Copyright (C) Crawford Currie 2023-2026 - All rights reserved*/
 
-import { EventCalendar } from "../src/EventCalendar.js";
+import EventCalendar from "../src/EventCalendar.js";
 
 function lengthOfMonth(y, m) {
   const nMonth = (m + 1) % 12;
@@ -52,46 +52,42 @@ const events = [
   }
 ];
 
-const $cal = $(".ui-dialog [name=calendar]");
+const opts = {
+  events: events,
+  title: "Events",
+  add: e => {
+    console.log("Add event ", e);
+    return Promise.resolve(99);
+  },
+  change: e => {
+    console.log("Change event ", e);
+    return Promise.resolve();
+  },
+  delete: e => {
+    console.log("Delete event ", e);
+    return Promise.resolve();
+  }
+};
 
-$("#open-dialog")
-.on("click", () => {
-  const opts = {
-    events: events,
-    title: "Events",
-    add: e => {
-      console.log("Add event ", e);
-      return Promise.resolve(99);
-    },
-    change: e => {
-      console.log("Change event ", e);
-      return Promise.resolve();
-    },
-    delete: e => {
-      console.log("Delete event ", e);
-      return Promise.resolve();
-    }
-  };
-
-  if ($("[name=future_only]").prop("checked"))
-    opts.future_only = true;
-
-  opts.editor = {};
-
-  opts.editor.clockpicker = {};
-  if ($("[name=editor-clockpicker-default]").prop("checked"))
-    opts.editor.clockpicker.default = "now";
-  opts.editor.clockpicker.placement = $("[name=editor-clockpicker-placement]").val();
-  opts.editor.clockpicker.align = $("[name=editor-clockpicker-align]").val();
-  if ($("[name=editor-clockpicker-twelvehour]").prop("checked"))
-    opts.editor.clockpicker.twelvehour = true;
-
-  $cal.parent().dialog({
-    modal: true,
-    width: 500,
-    open: () => {
-      console.log(opts);
-      $cal.event_calendar(opts);
-    }
-  });
+function regen() {
+  cal_el.innerHTML = '';
+  new EventCalendar(cal_el, opts);
+}
+const fo = document.querySelector("#future_only");
+fo.addEventListener("change", () => {
+  opts.future_only = fo.checked;
+  console.log("FO",opts.future_only);
+  regen();
 });
+const titel = document.querySelector("#title");
+titel.addEventListener("change", () => {
+  opts.title = titel.value;
+  regen();
+});
+
+opts.editor = {};
+opts.title = titel.value;
+opts.future_only = fo.value;
+
+const cal_el = document.getElementById("calendar");
+regen();
