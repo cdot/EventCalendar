@@ -271,8 +271,8 @@
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 50%;
-  width: 200px;
-  height: 200px;
+  width: 500px;
+  height: 500px;
   overflow: visible;
   position: relative;
   /* Disable text selection highlighting. Thanks to Hermanya */

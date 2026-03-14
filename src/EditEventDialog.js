@@ -1,6 +1,7 @@
 /*Copyright (C) Crawford Currie 2023-2026 - All rights reserved*/
 
 import Modal from "./Modal.js";
+import ClockPicker from "./ClockPicker.js";
 
 /**
  * Parse a server local time HH[:MM[:SS]][am|pm] string
@@ -77,6 +78,17 @@ class EditEventDialog {
       dialog.innerHTML = html;
       this.element = dialog;
       this.modal = new Modal(dialog);
+
+      const times = dialog.querySelectorAll("input[type=time]");
+      for (const tel of times) {
+        tel.addEventListener("click", function() {
+          let inst = ClockPicker.instance(this);
+          if (!inst)
+            inst = new ClockPicker(this);
+          inst.show();
+        });
+      }
+      
       document.querySelector("body").append(dialog);
 
       dialog.querySelector("[name=start-date]")

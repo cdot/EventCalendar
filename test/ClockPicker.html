@@ -6,12 +6,16 @@
     <link href="../css/ClockPicker.css" rel="stylesheet">
     <script type="module">
       import ClockPicker from "../src/ClockPicker.js";
-      new ClockPicker(document.getElementById("Clock")).show();
+      document.getElementById("open_clock")
+      .addEventListener("click", function() {
+        let inst = ClockPicker.instance(this);
+        if (!inst)
+          inst = new ClockPicker(this);
+        inst.show();
+      });
     </script>
   </head>
   <body>
-    <div id="Clock">
-      clock
-    </div>
+    Click the input <input type="time" id="open_clock">
   </body>
 </html>

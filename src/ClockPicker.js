@@ -224,7 +224,7 @@ class ClockPicker {
     const fs = window.getComputedStyle(element).getPropertyValue('font-size');
     // Layout is calculated on the basis of a 24px font in a 200px
     // dial.
-    const font_factor = parseFloat(fs) / 24;
+    const font_factor = parseFloat(fs) / 18;
 
     this.outerRadius = 80 * font_factor;
     // innerRadius = 80 on 12 hour clock
@@ -481,7 +481,7 @@ class ClockPicker {
    * @private
    */
 	locate() {
-    const bcr = this.plate.getBoundingClientRect();
+    const bcr = this.input.getBoundingClientRect();
 		const offset = {
       top: bcr.top + window.scrollY,
       left: bcr.left + window.scrollX
@@ -588,7 +588,7 @@ class ClockPicker {
 			if (!isDescendant(this.popover, target)
 				  // LOST && !isDescendant(this.addon, target)
 					&& !isDescendant(this.input, target)) {
-				this.style.display = "none";
+				this.popover.style.display = "none";
 			}
 		};
 		this.listen(document, `click.clockpicker.${this.id}`, this.hider);
@@ -863,7 +863,7 @@ class ClockPicker {
    * @return {ClockPicker} the ClockPicker attached (if any).
    */
   static instance(element) {
-	  return element.dataset.clockpicker;
+	  return element.dataset ? element.dataset.clockpicker : undefined;
   }
 }
 
