@@ -1,11 +1,9 @@
 # Event Calendar
-UI for a simple event calendar application.
+Zero dependency UI for a simple browser event calendar application.
 
-<img src="/images/splash.png" width="197" height="309" alt="Image" />
+[Try it here](https://cdot.github.io/EventCalendar/test/EventCalendar.html)
 
-When applied to a div, the widget creates a visual representation of a
-month-by-month calendar, with a block showing events underneath. Events
-are simple, having just a start and an end, a title, and a description.
+Events are simple, having just a start and an end, a title, and a description.
 
 For example:
 ```
